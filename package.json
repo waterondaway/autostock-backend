@@ -20,7 +20,9 @@
   "homepage": "https://github.com/waterondaway/autostock-backend#readme",
   "description": "",
   "dependencies": {
-    "express": "^5.1.0"
+    "express": "^5.1.0",
+    "fs": "^0.0.1-security",
+    "pg": "^8.14.1"
   },
   "devDependencies": {
     "nodemon": "^3.1.9"

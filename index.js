@@ -1,10 +1,10 @@
 const express = require('express');
+const { readdirSync, read, readdir } = require('fs');
 const app = express();
-const port = 3000;
+const port = 5000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+readdirSync('./routes')
+    .map((file) => { app.use('/api', require(`./routes/${file}`)); });
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
