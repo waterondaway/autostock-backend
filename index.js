@@ -1,10 +1,15 @@
 const express = require('express');
-const app = express();
-const port = 3000;
+const { readdirSync } = require('fs');
+const cors = require('cors');
+const morgan = require('morgan');
+const port = 8000;
 
-app.get('/', (req, res) => {
-    res.send('Hello World!');
-});
+const app = express();
+app.use(morgan('dev'));
+app.use(cors());
+
+readdirSync('./routes')
+    .map((file) => { app.use('/api', require(`./routes/${file}`)); });
 
 app.listen(port, () => {
     console.log(`Server is running at http://localhost:${port}`);
