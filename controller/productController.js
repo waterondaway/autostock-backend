@@ -36,3 +36,19 @@ export async function AddProduct(req, res) {
         return res.status(500).json({error:err.massage})
     }
     }
+
+
+export async function GetAllProduct(req, res) {
+    console.log('GET /products requested')
+    
+    try {
+        const result = await database.query({
+        text: `SELECT * FROM products`
+        })
+    
+        return res.status(200).json(result.rows)
+    } catch (err) {
+        console.error('Database error:', err)
+        return res.status(500).json({ error: err.message })
+    }
+    }
