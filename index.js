@@ -1,7 +1,12 @@
 const express = require('express');
-const { readdirSync, read, readdir } = require('fs');
+const { readdirSync } = require('fs');
+const cors = require('cors');
+const morgan = require('morgan');
+const port = 8000;
+
 const app = express();
-const port = 5000;
+app.use(morgan('dev'));
+app.use(cors());
 
 readdirSync('./routes')
     .map((file) => { app.use('/api', require(`./routes/${file}`)); });
