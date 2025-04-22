@@ -1,7 +1,9 @@
 const express = require('express');
 const router = express.Router();
-const { getTransactionData } = require('../controllers/transactionControl');
+const { recordTransaction, getTransaction, getTransactionDetail } = require('../controllers/transactionControl.js');
 
-router.get('/transactions', getTransactionData);
+router.post('/add-transactions', recordTransaction);
+router.get('/transactions', getTransaction);
+router.get('/transactions/detail/:id', getTransactionDetail);
 
 module.exports = router;

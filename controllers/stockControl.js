@@ -24,18 +24,49 @@ exports.getAvailableStock = async (req, res) => {
 }
 
 exports.removeStock = async (req, res) => {
-    const { id } = req.body;
-    try {
-        const [result] = await pool.query("DELETE FROM stocks WHERE id = ?", [id]);
-        if (result.affectedRows === 0) {
-            return res.status(404).json({ message: "Stock not found" });
-        }
-        res.status(200).json({ message: "Stock removed successfully" });
-    } catch (error) {
-        console.error("Error removing stock:", error);
-        res.status(500).json({ error: "Internal Server Error" });
+    const { items } = req.body;
+
+    if (!items || !Array.isArray(items)) {
+        return res.status(400).json({ message: "Invalid items format" });
     }
-}
+
+    const connection = await pool.getConnection();
+    try {
+        await connection.beginTransaction();
+
+        for (const item of items) {
+            const [rows] = await connection.query(
+                "SELECT quantity FROM stocks WHERE partnumber = ?",
+                [item.partnumber]
+            );
+
+            if (rows.length === 0) {
+                // await connection.rollback();
+                return res.status(404).json({ message: `Item partnumber ${item.partnumber} not found` });
+            }
+
+            if (rows[0].quantity === 0) {
+                // await connection.rollback();
+                return res.status(200).json({ message: `Item partnumber ${item.partnumber} is out of stock` });
+            }
+
+            await connection.query(
+                "UPDATE stocks SET quantity = quantity - 1 WHERE partnumber = ?",
+                [item.partnumber]
+            );
+        }
+
+        await connection.commit();
+        res.status(200).json({ message: "Stock updated successfully" });
+    } catch (error) {
+        await connection.rollback();
+        console.error("Error updating stock:", error);
+        res.status(500).json({ error: "Internal Server Error" });
+    } finally {
+        connection.release();
+    }
+};
+
 exports.updateStock = async (req, res) => {
     const { id, quantity } = req.body;
     try {
