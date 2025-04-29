@@ -5,6 +5,8 @@ const morgan = require('morgan');
 const loginRouter = require('./routes/loginRoute.js')
 const stockRouter = require('./routes/stockRoute.js')
 const transactionRouter = require('./routes/transactionRoute.js')
+const profileRoute = require('./routes/profileRoute.js')
+
 const port = 8000;
 
 const app = express();
@@ -14,6 +16,7 @@ app.use(cors());
 app.use(loginRouter)
 app.use(stockRouter)
 app.use(transactionRouter)
+app.use(profileRoute)
 
 readdirSync('./routes')
     .map((file) => { app.use('/api', require(`./routes/${file}`)); });

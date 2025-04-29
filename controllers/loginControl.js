@@ -12,7 +12,7 @@ exports.loginUser = async (req, res) => {
         }
         const user = rows[0];
         const token = jwt.sign({ name: user.name }, secretKey, { expiresIn: '1h' });
-        res.status(200).json({ message:"success" , token, name: user.name });
+        res.status(200).json({ message:"success" , token, name: user.name, id: user.id });
     } catch (error) {
         console.error("Error logging in:", error);
         res.status(500).json({ error: "Internal Server Error" });
